@@ -5,7 +5,6 @@
         this.setup();
         this.initSliders();
         this.events();
-        this.currencySwitchHandler( { data: {self: this} });
         this.getCurrencyData();
     }
 
@@ -30,8 +29,8 @@
             });
 
             // console.log(self.state)
-            console.log('initSliders')
-            console.log(self.state.grossInvoice)
+            // console.log('initSliders')
+            // console.log(self.state.grossInvoice)
 
             if( self.isDefined(self.state.grossInvoice)){
                 inPln = self.state.grossInvoice;
@@ -46,9 +45,9 @@
                 sliderValue = $sliderInput.val();
 
             // console.log($sliderInput)
-            console.log($sliderInput);
-            console.log(sliderInputId);
-            console.log(sliderValue);
+            // console.log($sliderInput);
+            // console.log(sliderInputId);
+            // console.log(sliderValue);
 
 
 
@@ -79,8 +78,8 @@
                     $sliderOutput = $('[data-binding="'+sliderInputId+'"]');
 
 
-                console.log($sliderInput);
-                console.log($sliderInput.val());
+                // console.log($sliderInput);
+                // console.log($sliderInput.val());
                 $sliderOutput.val(+sliderValue);
 
                 sliderState[sliderInputId] = {
@@ -142,19 +141,21 @@
             var self = e.data.self,
                 curr = self.isDefined(self.state.currency) && self.state.currency;
 
-            console.log(self.state);
+            // console.log(self.state);
 
             self.calculateTotalCost(curr);
-            console.log('state update');
+            // console.log('state update');
         },
         currencySwitchHandler: function(e){
-            var self = e.data.self, inEuro = {}, inPln = {},
+            var self = e.data.self, initial = e.data.initial,
                 isChecked = $(this).is(':checked'),
                 currencyType = isChecked ? 'euro' : 'pln';
 
             self.setState({currency: currencyType});
 
-            self.updateGrossInvoiceSlider(isChecked);
+            console.log(initial);
+
+            self.updateGrossInvoiceSlider(isChecked, initial);
             Foundation.reInit($($('[data-slider]')[0]))
             // Foundation.reInit(self.sliderArray[0])
         },
@@ -164,9 +165,9 @@
                 maxValueInEuro = (this.state.grossInvoice.maxValue/this.state.euroRate).toFixed(0),
                 minValueInEuro = (this.state.grossInvoice.minValue/this.state.euroRate).toFixed(0);
 
-            console.log(grossInvoiceInEuro)
-            console.log(maxValueInEuro)
-            console.log(minValueInEuro)
+            // console.log(grossInvoiceInEuro)
+            // console.log(maxValueInEuro)
+            // console.log(minValueInEuro)
 
 
             return sliderStateInEuro['grossInvoiceInEuro'] = {
@@ -177,14 +178,26 @@
             };
 
         },
-        updateGrossInvoiceSlider: function(isChecked){
-            console.log('updateGrossInvoiceSlider');
-            console.log($('#grossInvoice'));
+        updateGrossInvoiceSlider: function(isChecked, initial){
+            // console.log('updateGrossInvoiceSlider');
+            // console.log($('#grossInvoice'));
             var currentState = isChecked ? this.state.grossInvoiceInEuro : this.state.grossInvoiceInPln,
-                currentValue = +$('#grossInvoice').val(),
-                valueInCurrency = isChecked ? Math.round((currentValue/this.state.euroRate)*100)/100 : Math.round((currentValue*this.state.euroRate)*100)/100;
+                currentValue = (+$('#grossInvoice').val()).toFixed(2),
+                valueInCurrency = isChecked ? (currentValue/this.state.euroRate).toFixed(2) : this.isDefined(initial) ? currentValue : (currentValue*this.state.euroRate).toFixed(2);
 
+            console.log(initial);
+            console.log(isChecked);
             console.log(currentValue);
+            console.log(this.state);
+            console.log(this.state.euroRate);
+            console.log(currentValue*this.state.euroRate);
+
+            console.log((currentValue/this.state.euroRate).toFixed(0));
+            console.log((currentValue*this.state.euroRate).toFixed(0));
+            console.log(Math.round((currentValue*this.state.euroRate)*100)/100);
+            console.log( (Math.round(currentValue*this.state.euroRate)));
+
+            console.log(valueInCurrency);
 
             if(this.isDefined(currentState) ){
                 // console.log(currentState);
@@ -210,8 +223,12 @@
                 self.$currencySwitch.removeAttr('disabled').removeClass('disabled');
 
                 if(self.isDefined(self.state.grossInvoice)) {
-                    self.setState({ grossInvoiceInEuro: self.recalculate() });
+                    self.setState({
+                        grossInvoiceInEuro: self.recalculate()
+                    });
                 }
+
+                self.currencySwitchHandler( { data: {self: self, initial: true} });
 
             });
 
@@ -223,7 +240,7 @@
             this.diff.fail(function(error){
                 self.tableCData = self.getData('http://api.nbp.pl/api/exchangerates/rates/C/EUR/today/');
                 self.tableCData.done(function(data){
-                    console.log(data.rates[0].ask);
+                    // console.log(data.rates[0].ask);
                     self.setState({euroRate: data.rates[0].ask});
                     self.$currencySwitch.removeAttr('disabled').removeClass('disabled');
                     if(self.isDefined(self.state.grossInvoice )) {
@@ -233,15 +250,15 @@
             });
         },
         calculateTotalCost: function(){
-            console.log('calculateTotalCost')
+            // console.log('calculateTotalCost')
             if(this.isDefined(this.state.grossInvoice) && this.isDefined(this.state.paymentDeadline) ){
                 var days = +this.state.paymentDeadline.currentValue,
                     grossInvoiceValue = this.state.grossInvoice.currentValue,
                     ratio = (days*0.1).toFixed(1),
                     commission = ((grossInvoiceValue*ratio)/100).toFixed(2);
 
-                console.log('this.state.grossInvoice.currentValue');
-                console.log(this.state.grossInvoice.currentValue);
+                // console.log('this.state.grossInvoice.currentValue');
+                // console.log(this.state.grossInvoice.currentValue);
 
                 this.$total.text(commission + ' ' + this.state.grossInvoice.curr);
             }
@@ -255,6 +272,7 @@
     $(function () {
         // $(document).foundation();
         var calc = new Calculator();
+        window.calc = calc;
     })
 
 })(jQuery);
