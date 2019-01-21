@@ -1,0 +1,8 @@
+@mixin border-arrow($dir:right, $width:10px, $color:#000) {
+	$opposite: opposite-position($dir);
+	border:$width solid transparent;
+	border-#{$dir}: 0 solid transparent;
+	border-#{$opposite}:$width solid $color;
+	height:0;
+	width:0;
+}

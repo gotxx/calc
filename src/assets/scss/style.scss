@@ -1,0 +1,16 @@
+// @import url(https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&subset=latin,latin-ext);
+// @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&subset=latin-ext');
+// @import url('https://fonts.googleapis.com/css?family=Dosis:400,700&subset=latin-ext');
+// @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&subset=latin,latin-ext);
+// @import url(https://fonts.googleapis.com/css?family=Rajdhani:400,600,700&subset=latin-ext);
+//@import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "https://cdn.jsdelivr.net/npm/foundation-sites@6.5.1/dist/css/foundation.min.css";
+// @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?ver=4.9.9);
+// @import url(https://transfactor.eu/wp-content/cache/autoptimize/css/autoptimize_4ae49882ae4a4c078656958cbaab5c1b.css);
+
+.js-slider {
+  display: flex;
+  .slider {
+    flex: 1;
+  }
+}

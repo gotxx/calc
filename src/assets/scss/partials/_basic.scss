@@ -1,0 +1,86 @@
+//globals
+.fleft { float: left; }
+.fright { float: right; }
+
+%inblock {
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+}
+.cf {
+ 	*zoom: 1;
+  	&:before,
+  	&:after {
+    	display: table;
+    	content: "";
+    	line-height: 0;
+  	}
+  	&:after {
+    	clear: both;
+  	}
+}
+
+.ir {
+	background-color: transparent;
+	border: 0;
+	overflow: hidden;
+	/* IE 6/7 fallback */
+	*text-indent: -9999px;
+	&:before {
+		content: "";
+		display: block;
+		width: 0;
+		height: 150%;
+	}
+}
+div {
+	@include box-sizing(border-box);
+}
+img {
+	display: block;
+	outline: none; 
+	border: none; 
+	margin: 0 auto;
+	max-width: 100%;
+}
+h1,h2 {
+	font-family: $font-n24, sans-serif;
+	line-height: 1.2;
+	font-weight: 700;
+	text-transform: none;
+	color: #000;
+}
+h1 {
+	margin: 0;
+	font-size: 1.500rem;
+	line-height: 1.2;
+	margin: 25px 0;
+	// text-transform: uppercase;
+}
+h2 {
+	margin: 0.3em 0;
+	font-size: 0.875em;
+}
+p {
+	margin: 0 0 0.3em 0;
+	font-size: 0.875em;
+}
+ol, ul {
+	margin: 1em 0;
+	padding-left: 22px;
+	font-size: $basic-font-size;
+	li {
+		margin-bottom: 5px;
+		font-size: 0.750em;
+		line-height: 1.5;
+		font-weight: 400;
+	}
+}
+dl {
+	margin: 0;
+	font-size: $basic-font-size;
+	dt {
+		float: left;
+	}
+	dd {}
+}
