@@ -1,0 +1,86 @@
+doctype html
+html
+  head
+    title Kalkulator
+    link(rel="stylesheet" type="text/css" href="assets/css/style.min.css")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(charset="UTF-8")
+    meta(name="description" content="transfactor kalkulator")
+
+    //if lt IE 7
+    //- link(rel="stylesheet" type="text/css" href="all-ie-only.css")
+
+  body#app
+
+    header.container
+
+
+    section.grid-container
+          #calc.calc
+
+            .row
+              .column.small-12.large-6
+
+                .row
+                  .column.calc__switch-wrapper
+                    .switch.calc__switch
+                      input.switch-input.disabled#currencySwitch(type="checkbox" name="currencySwitch" disabled='disabled')
+                      label.switch-paddle(for="currencySwitch")
+                        span.show-for-sr currency
+                      span.switch-active(aria-hidden="true") PLN
+                      span.switch-inactive(aria-hidden="true") EURO
+                    .calc__slider-title Kwota faktury brutto
+                  .column.small-12.large-9.calc__slider-wrapper.js-slider
+                    button.button.calc__slider-btn.js-btn(data-value="0") -
+                    .slider.calc__slider(data-slider data-start="300" data-end="50000" data-initial-start="4000" data-step="100" data-changed-delay="0" data-label="PLN")
+                      span.slider-handle(data-slider-handle role="slider" tabindex="1" data-controls="grossInvoice")
+                      span.slider-fill(data-slider-fill)
+                      input(type="hidden" id="grossInvoice")
+                      .calc__slider-label-wrapper
+                        span.label-left.js-label-left
+                        span.label-right.js-label-right
+                    button.button.calc__slider-btn.js-btn(data-value="1") +
+                  .column.small-12.large-3
+                    input.calc__slider-input(type="number" id="grossInvoiceOutput" data-binding="grossInvoice" step="100")
+                    label.calc__slider-input-label.js-label
+                  .column
+                    .calc__slider-title Termin płatnośi FV
+                  .column.small-12.large-9.calc__slider-wrapper.js-slider
+                    button.button.calc__slider-btn.js-btn(data-value="0") -
+                    .slider.calc__slider(data-slider data-start="7" data-end="90" data-initial-start="14" data-step="1" data-changed-delay="0" data-label="dni")
+                      span.slider-handle(data-slider-handle role="slider" tabindex="1" aria-controls="paymentDeadline")
+                      span.slider-fill(data-slider-fill)
+                      input(type="hidden" id="paymentDeadline")
+                      .calc__slider-label-wrapper
+                        span.label-left.js-label-left
+                        span.label-right.js-label-right
+                    button.button.calc__slider-btn.js-btn(data-value="1") +
+                  .column.small-12.large-3
+                    input.calc__slider-input(type="number" id="paymentDeadlineOutput" data-binding="paymentDeadline" step="1")
+                    label.calc__slider-input-label.js-label
+                  .column.small-12
+                    .cell
+                      .calc__slider-title Całkowity koszt:&nbsp;
+                        span#totalCost
+                        |  netto
+              .column.small-12.large-6.calc__right
+                ul.calc__list
+                  li Wypłacamy
+                    strong  100%
+                    |  wartości faktury brutto.
+                  li Windykacja
+                    strong  0 zł.
+                  li Monoitoring płatności
+                    strong  0 zł.
+                a.button.calc__btn_send(href="https://transfactor.eu/lp/cash-flow/" target="_blank")
+                  span Wyślij FV do sfinansowania
+
+            .row
+              .column.small-12
+                span.calc__description Kalkulator przedstawia przubiżony koszt sfinansowani faktury. Dokładna kowta zostanie wyliczona na podstawie przesłanej faktury.
+
+
+  script(src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/what-input/5.1.3/what-input.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.1/dist/js/foundation.min.js" integrity="sha256-WUKHnLrIrx8dew//IpSEmPN/NT3DGAEmIePQYIEJLLs= sha384-53StQWuVbn6figscdDC3xV00aYCPEz3srBdV/QGSXw3f19og3Tq2wTRe0vJqRTEO sha512-X9O+2f1ty1rzBJOC8AXBnuNUdyJg0m8xMKmbt9I3Vu/UOWmSg5zG+dtnje4wAZrKtkopz/PEDClHZ1LXx5IeOw==" crossorigin="anonymous")
+  script(src="assets/js/app.min.js")

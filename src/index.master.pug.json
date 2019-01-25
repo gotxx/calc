@@ -1,0 +1,45 @@
+{
+	"title-lvl1": "Męska rzecz",
+	"title-lvl2": "Wybierz dla niego coś specjalnego",
+	"title-lvl3": "Użyj kodu CHLOPAK, aby obniżyć cenę wybranego produktu.",
+	"items": [
+		{
+			"id": "1",
+			"icon": "assets/images/icon-1.png",
+			"name": "słychawki",
+			"url": "/tag/product/list/tagId/1204",
+			"dupy": [{"name":"dupa1"},{"name":"dupa2"},{"name":"dupa3"},{"name":"dupa4"}]
+		},
+		{
+			"id": "2",
+			"icon": "assets/images/icon-2.png",
+			"name": "dyski zewnętrzne",
+			"url": "/tag/product/list/tagId/1203",
+			"dupy": [{"name":"2dupa1"},{"name":"2dupa2"},{"name":"2dupa3"},{"name":"2dupa4"}]
+		},
+		{
+			"id": "3",
+			"icon": "assets/images/icon-3.png",
+			"name": "akcesoria samochodowe",
+			"url": "/tag/product/list/tagId/1202"
+		},
+		{
+			"id": "4",
+			"icon": "assets/images/icon-4.png",
+			"name": "Pielęgnacja",
+			"url": "/tag/product/list/tagId/1201"
+		},
+		{
+			"id": "5",
+			"icon": "assets/images/icon-5.png",
+			"name": "kamery sportowe",
+			"url": "/tag/product/list/tagId/1200"
+		},
+		{
+			"id": "6",
+			"icon": "assets/images/icon-6.png",
+			"name": "Smartfony",
+			"url": "/tag/product/list/tagId/1205"
+		}
+	]
+}
