@@ -4,13 +4,301 @@
 // @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&subset=latin,latin-ext);
 // @import url(https://fonts.googleapis.com/css?family=Rajdhani:400,600,700&subset=latin-ext);
 //@import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&subset=latin-ext');
 @import "https://cdn.jsdelivr.net/npm/foundation-sites@6.5.1/dist/css/foundation.min.css";
 // @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?ver=4.9.9);
 // @import url(https://transfactor.eu/wp-content/cache/autoptimize/css/autoptimize_4ae49882ae4a4c078656958cbaab5c1b.css);
+@import "mixins/border_radius";
+@import "mixins/transition";
 
 .js-slider {
   display: flex;
   .slider {
     flex: 1;
+  }
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+$themeColor : #dc6026;
+
+#app {
+  background: url(../images/bg.jpg) no-repeat 0 0;
+  padding-top: 1rem;
+}
+
+.calc {
+  padding: .7rem;
+  background-color: rgba(255,255,255, .1);
+  font-family: 'Open Sans', sans-serif;
+  //@include breakpoint(medium only) {}
+  @media screen and (min-width: 64em) {
+    padding: 65px 45px 35px;
+  }
+  &__slider {
+    margin-top: auto;
+    margin-bottom: auto;
+    &-wrapper {
+      margin-top: 5px;
+      margin-bottom: 57px;
+    }
+
+    &-btn {
+      background-color: transparent;
+      margin: auto 10px;
+      padding: 0;
+      line-height: 1;
+      font-size: 28px;
+      border: 0;
+      &:hover, &:focus {
+        background-color: transparent;
+        color: $themeColor;
+      }
+    }
+    &-title {
+      margin: 10px 0;
+      font-size: 20px;
+      font-weight: 300;
+      color: #fff;
+      span {
+        //font-weight: 700;
+      }
+      @media screen and (min-width: 64em) {
+        margin: 0;
+        font-size: 24px;
+      }
+    }
+    &-input {
+      margin: 0;
+      height: 2.5rem;
+      padding: .5rem .3rem;
+      background-color: transparent;
+      border: 1px solid #fff;
+      font-size: 22px;
+      text-align: right;
+      font-weight: 300;
+      color: #fff;
+      &-label {
+        text-align: right;
+        color: #798993;
+      }
+      &:focus {
+        background-color: transparent;
+      }
+    }
+    &-label-wrapper {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 26px;
+      pointer-events: none;
+      > * {
+        font-size: 14px;
+        color: #798993;
+        //font-weight: 700;
+      }
+      .label-left {}
+      .label-right {}
+    }
+    .slider-fill {
+      background-color: $themeColor;
+    }
+    .slider-handle {
+      background-color: #fff;
+      width: 30px;
+      height: 30px;
+      @include border-radius(50%);
+      &:after {
+        display: block;
+        margin: 5px;
+        width: 20px;
+        height: 20px;
+        content: "";
+        background-color: $themeColor;
+        @include border-radius(50%);
+      }
+    }
+  }
+  &__switch {
+    display: inline-block;
+    height: auto;
+    margin: 5px 46px 5px 36px;
+    @media screen and (min-width: 64em) {
+      position: absolute;
+      right: 0;
+    }
+    &-wrapper {
+      position: relative;
+    }
+    .switch-active, .switch-inactive {
+      display: block;
+      font-size: 12px;
+    }
+    .switch-active {
+      right: 100%;
+      left: auto;
+      margin-right: 10px;
+    }
+    .switch-inactive {
+      opacity: .4;
+      left: 100%;
+      right: auto;
+      margin-left: 10px;
+    }
+    .switch-input {
+      &.disabled~.switch-active, &.disabled~.switch-inactive, &.disabled+.switch-paddle { opacity: .2; cursor: default; }
+      &:checked~.switch-active { opacity: .4; }
+      &:checked~.switch-inactive { opacity: 1; }
+    }
+    .switch-paddle {
+      height: 12px;
+      width: 28px;
+      background: rgba(255,255,255,0.4);
+      @include border-radius(20px);
+      &:after {
+        position: absolute;
+        left: -1px;
+        top: 50%;
+        width: 12px;
+        height: 12px;
+        margin-top: -6px;
+        @include border-radius(50%);
+        background-color: $themeColor;
+      }
+      &:before {
+        display: block;
+        content: "";
+        position: absolute;
+        left: -4px;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        margin-top: -9px;
+        background-color: #fff;
+        transform: translate3d(0px, 0px, 0px);
+        @include transition(all .25s ease-out);
+        @include border-radius(50%);
+      }
+    }
+    input:checked~.switch-paddle {
+      background-color: $themeColor;
+      &:after {
+        left: 19px;
+      }
+      &:before {
+        left: 16px;
+      }
+    }
+    &_slider {
+      display: flex;
+      width: 50px;
+
+      .calc__slider {
+        flex: 1;
+        @include border-radius(20px);
+        &-label-wrapper {
+          margin-top: -7px;
+          position: relative;
+          > * {
+            position: absolute;
+          }
+          .label-left {
+            right: 100%;
+            margin-right: 5px;
+          }
+          .label-right {
+            left: 100%;
+            margin-left: 5px;
+
+          }
+
+        }
+        .slider-fill {
+          @include border-radius(20px);
+        }
+      }
+    }
+  }
+  &__description {
+    display: block;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: 300;
+    color: #798993;
+    text-align: center;
+    @media screen and (min-width: 64em) {
+      margin-top: 35px;
+    }
+  }
+  &__list {
+    margin: 10px 0 30px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    list-style: none;
+    color: #ffffff;
+    @media screen and (min-width: 64em) {
+      margin: 27px 0;
+      font-weight: 300;
+      font-size: 24px;
+    }
+  }
+  @media screen and (min-width: 64em) {
+    &__right {
+      padding-left: 30px;
+    }
+  }
+  &__btn {
+    &_send {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-size: 13px;
+      line-height: 1.1;
+      font-weight: 900;
+      text-transform: uppercase;
+      background-color: $themeColor;
+      @media screen and (min-width: 64em) {
+        padding: 25px 40px;
+        font-size: 17px;
+      }
+      span {
+        position: relative;
+        padding: 0 30px 0 0;
+        @media screen and (min-width: 64em) {
+          padding: 0 60px 0 10px;
+        }
+        &:after {
+          display: block;
+          right: 0;
+          content: "";
+          position: absolute;
+          top: 50%;
+          background: url(//transfactor.eu/wp-content/themes/transfactor/css/../img/arrow--white.png) 0 0 no-repeat;
+          background-size: 100%;
+          width: 18px;
+          height: 12px;
+          margin-top: -6px;
+          @include transition(all .25s ease-out);
+          @media screen and (min-width: 64em) {
+            width: 28px;
+            height: 20px;
+            margin-top: -10px;
+          }
+        }
+      }
+      &:hover, &:focus {
+        background-color: $themeColor;
+        span {
+          &:after {
+            right: -5px;
+            @include transition(all .25s ease-out);
+          }
+        }
+      }
+    }
   }
 }

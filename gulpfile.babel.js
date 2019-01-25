@@ -5,6 +5,7 @@ import browserSync from 'browser-sync';
 import del from 'del';
 // import ts from 'gulp-typescript';
 import sass from 'gulp-sass';
+import concat from 'gulp-concat';
 import autoprefixer from 'gulp-autoprefixer';
 import sourceMaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
@@ -123,6 +124,7 @@ gulp.task('build:js', () => {
 			} }))
 		// .pipe(plumber({ errorHandler: errHandler }))
 		.pipe(sourceMaps.init())
+		.pipe(concat('app.js'))
 		.pipe(rename({suffix: ".min"}))
 		.pipe(uglify())
 		.pipe(sourceMaps.write('.'))

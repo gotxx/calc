@@ -4,14 +4,15 @@
     function Calculator(){
         this.setup();
         this.initSliders();
-        this.events();
         this.getCurrencyData();
+        this.events();
     }
-
 
     Calculator.prototype = {
         setup: function(){
-            this.state = {};
+            this.state = {
+                currency: "PLN"
+            };
             this.$app = $('#calc');
             this.$total = $('#totalCost');
             this.$slidersWrappers = $('.js-slider');
@@ -28,28 +29,32 @@
                 self.setupSliderData($(this));
             });
 
-            // console.log(self.state)
-            // console.log('initSliders')
-            // console.log(self.state.grossInvoice)
-
             if( self.isDefined(self.state.grossInvoice)){
                 inPln = self.state.grossInvoice;
             }
-            self.setState({ grossInvoiceInPln: inPln});
+
+            self.setState({ grossInvoiceInPln: inPln}, 'set initial PLN state');
         },
         setupSliderData: function($slider){
             // console.log($slider);
             var sliderState = {},
                 $sliderInput = $slider.find('input[type="hidden"]'),
                 sliderInputId = $slider.find('[aria-controls]').attr('aria-controls'),
-                sliderValue = $sliderInput.val();
+                sliderValue = +$sliderInput.val(),
+                labelSufix = sliderInputId === 'grossInvoice' ? ' brutto' : '';
 
-            // console.log($sliderInput)
-            // console.log($sliderInput);
-            // console.log(sliderInputId);
-            // console.log(sliderValue);
+            // console.log("$('#grossInvoice').val()")
+            // console.log($('#grossInvoice').val())
+            // console.log(sliderValue)
 
-
+            if(!$slider.hasClass('js-slider-switch')) {
+                this.updateLabels({
+                    $slider: $slider,
+                    labelLeftTpl: '<strong>' + $slider.data('start') + '</strong> <span>' + $slider.data('label') + '</span>',
+                    labelRightTpl: '<strong>' + $slider.data('end') + '</strong> <span>' + $slider.data('label') + '</span>',
+                    sliderOutputTpl: $slider.data('label') + labelSufix
+                });
+            }
 
             sliderState[sliderInputId] = {
                 currentValue: +sliderValue,
@@ -58,18 +63,31 @@
                 step: +$sliderInput.attr('step')
             };
 
-            this.setState(sliderState);
+            this.setState(sliderState,sliderInputId + ' slider setup' );
+        },
+        updateLabels: function(option){
+            var $labelLeft = option.$slider.find('.js-label-left'),
+                labelLeftTpl = option.labelLeftTpl,
+                $labelRight = option.$slider.find('.js-label-right'),
+                labelRightTpl = option.labelRightTpl,
+                $slideOutput = option.$slider.parents('.js-slider').next().find('.js-label'),
+                sliderOutputTpl = option.sliderOutputTpl;
+
+            $labelLeft.html(labelLeftTpl);
+            $labelRight.html(labelRightTpl);
+            $slideOutput.html(sliderOutputTpl);
         },
         updateSlider: function(sliderIndex, newOptions){
             var currentOptions = this.sliderArray[sliderIndex].options;
+            // console.log(currentOptions);
             this.sliderArray[sliderIndex].options = Object.assign({}, currentOptions, newOptions);
-            // console.log(this.sliderArray[sliderIndex].options )
-
         },
         events: function(){
             var self = this;
             this.$slidersWrappers.on('click', '.js-btn', {self: this}, this.sliderBtnHandler);
-            this.$currencySwitch.on('change', {self: this}, this.currencySwitchHandler);
+            // this.$currencySwitch.on('change', {self: this}, this.currencySwitchHandler);
+            // $('#calc').on('mousedown', '.js-switch-paddle', {self: this}, this.currencySwitchHandler);
+
             this.$sliders.on('changed.zf.slider', function(e){
                 var $slider = $(this), sliderState = {},
                     $sliderInput = $slider.find('input[type="hidden"]'),
@@ -77,9 +95,13 @@
                     sliderValue = $sliderInput.val(),
                     $sliderOutput = $('[data-binding="'+sliderInputId+'"]');
 
+                // console.log('$sliderOutput.val(+sliderValue);')
+                console.log($slider);
+                // console.log("$('#grossInvoice').val()")
+                // console.log($('#grossInvoice'))
+                // console.log($('#grossInvoice').val())
 
-                // console.log($sliderInput);
-                // console.log($sliderInput.val());
+                // console.log(sliderValue);
                 $sliderOutput.val(+sliderValue);
 
                 sliderState[sliderInputId] = {
@@ -90,12 +112,17 @@
                     curr: self.state.currency
                 };
 
-                self.setState(sliderState);
+                if(sliderInputId === 'switchCurrency' && self.isDefined(self.state.euroRate)){
+                    self.currencySwitchHandler({data: {self: self, $slider: $slider }});
+                }
+
+
+
+                self.setState(sliderState, sliderInputId + ' changed.zf.slider');
                 return false;
             });
 
             this.$sliderOutput.on('change', this.outputHandler);
-
             this.$app.on('stateUpdate', {self: this}, this.stateUpdateHandler);
         },
         outputHandler: function(){
@@ -132,32 +159,68 @@
 
             return false;
         },
-        setState: function(newState){
+        setState: function(newState, caller){
             this.state = Object.assign({}, this.state, newState);
-            this.$app.trigger('stateUpdate');
-            // console.log(this.state);
+            this.$app.trigger('stateUpdate', [{caller: caller}]);
+            console.log(caller);
+            console.log(this.state)
         },
-        stateUpdateHandler: function(e){
-            var self = e.data.self,
-                curr = self.isDefined(self.state.currency) && self.state.currency;
-
-            // console.log(self.state);
-
-            self.calculateTotalCost(curr);
-            // console.log('state update');
+        stateUpdateHandler: function(e, data){
+            var self = e.data.self;
+            self.calculateTotalCost(data);
         },
+        // --------- checkbox version -----------
+        // currencySwitchHandler: function(e){
+        //     var self = e.data.self, initial = e.data.initial,
+        //         isChecked = $(this).is(':checked'),
+        //         currencyType = isChecked ? 'EURO' : 'PLN',
+        //         currencyData = isChecked ? self.state.grossInvoiceInEuro : self.state.grossInvoiceInPln,
+        //         $slider = self.sliderArray[1].$element;
+        //
+        //     self.updateLabels({
+        //         $slider: $slider,
+        //         labelLeftTpl: '<strong>' + currencyData.minValue + '</strong> <span>' + currencyType + '</span>',
+        //         labelRightTpl: '<strong>' + currencyData.maxValue  + '</strong> <span>' + currencyType + '</span>',
+        //         sliderOutputTpl: currencyType + ' brutto'
+        //     });
+        //
+        //     self.setState({currency: currencyType}, 'currencySwitchHandler-setCurrency');
+        //     self.updateGrossInvoiceSlider(isChecked, initial);
+        //     Foundation.reInit($($('[data-slider]')[1]));
+        //     // Foundation.reInit(self.sliderArray[1])
+        // },
         currencySwitchHandler: function(e){
+            console.log('currencySwitchHandler');
             var self = e.data.self, initial = e.data.initial,
-                isChecked = $(this).is(':checked'),
-                currencyType = isChecked ? 'euro' : 'pln';
+                $input = e.data.$slider.find('[type="hidden"]'),
+                isChecked = +$input.val() === 1 ? true : false,
+                currencyType = isChecked ? 'EURO' : 'PLN',
+                currencyData = isChecked ? self.state.grossInvoiceInEuro : self.state.grossInvoiceInPln,
+                $slider = self.sliderArray[1].$element;
 
-            self.setState({currency: currencyType});
+            // console.log(isChecked);
+            // console.log($slider);
 
-            console.log(initial);
+            if(!$slider.hasClass('js-slider-switch')) {
+                self.updateLabels({
+                    $slider: $slider,
+                    labelLeftTpl: '<strong>' + currencyData.minValue + '</strong> <span>' + currencyType + '</span>',
+                    labelRightTpl: '<strong>' + currencyData.maxValue  + '</strong> <span>' + currencyType + '</span>',
+                    sliderOutputTpl: currencyType + ' brutto'
+                });
+            }
+
+
+            self.setState({currency: currencyType}, 'currencySwitchHandler-setCurrency');
 
             self.updateGrossInvoiceSlider(isChecked, initial);
-            Foundation.reInit($($('[data-slider]')[0]))
-            // Foundation.reInit(self.sliderArray[0])
+
+            Foundation.reInit($($('[data-slider]')[1]));
+            // Foundation.reInit(self.sliderArray[1])
+            // console.log(e);
+            // console.log($slider);
+            // console.log(input);
+            // console.log(isChecked);
         },
         recalculate: function(){
             var sliderStateInEuro = {},
@@ -165,102 +228,99 @@
                 maxValueInEuro = (this.state.grossInvoice.maxValue/this.state.euroRate).toFixed(0),
                 minValueInEuro = (this.state.grossInvoice.minValue/this.state.euroRate).toFixed(0);
 
-            // console.log(grossInvoiceInEuro)
-            // console.log(maxValueInEuro)
-            // console.log(minValueInEuro)
-
-
             return sliderStateInEuro['grossInvoiceInEuro'] = {
                 currentValue: +grossInvoiceInEuro,
                 minValue: +minValueInEuro,
                 maxValue: +maxValueInEuro,
                 step: +this.state.grossInvoice.step
             };
-
         },
         updateGrossInvoiceSlider: function(isChecked, initial){
-            // console.log('updateGrossInvoiceSlider');
-            // console.log($('#grossInvoice'));
             var currentState = isChecked ? this.state.grossInvoiceInEuro : this.state.grossInvoiceInPln,
-                currentValue = (+$('#grossInvoice').val()).toFixed(2),
+                currentValue = +$('#grossInvoice').val(),
+                // currentValue = (+$('#grossInvoice').val()).toFixed(2),
                 valueInCurrency = isChecked ? (currentValue/this.state.euroRate).toFixed(2) : this.isDefined(initial) ? currentValue : (currentValue*this.state.euroRate).toFixed(2);
 
-            console.log(initial);
-            console.log(isChecked);
-            console.log(currentValue);
-            console.log(this.state);
-            console.log(this.state.euroRate);
-            console.log(currentValue*this.state.euroRate);
 
-            console.log((currentValue/this.state.euroRate).toFixed(0));
-            console.log((currentValue*this.state.euroRate).toFixed(0));
-            console.log(Math.round((currentValue*this.state.euroRate)*100)/100);
-            console.log( (Math.round(currentValue*this.state.euroRate)));
-
-            console.log(valueInCurrency);
+// console.log('currentValue !!!!!!!!!!!!!!!!')
+// console.log(isChecked)
+// console.log(this.state)
+// console.log($('#grossInvoice').val())
+// console.log(valueInCurrency)
+// console.log(this.state.euroRate)
+// console.log({
+// start: +currentState.minValue,
+// end: +currentState.maxValue,
+// step: +currentState.step,
+// initialStart: +valueInCurrency,
+// initialEnd: +currentState.step
+// })
 
             if(this.isDefined(currentState) ){
-                // console.log(currentState);
-                this.updateSlider(0, {
+                this.updateSlider(1, {
                     start: +currentState.minValue,
                     end: +currentState.maxValue,
                     step: +currentState.step,
-                    initialStart: valueInCurrency,
+                    initialStart: +valueInCurrency,
                     initialEnd: +currentState.step
                 });
-
             }
-
         },
+
+
+
+
         getData: function(url){
             return $.get(url);
         },
         getCurrencyData: function(){
-            var self = this, tableCData, tableAData = this.getData('http://api.nbp.pl/api/exchangerates/rates/A/EUR/today/');
+            var self = this, tableCData, tableAData = this.getData('https://api.nbp.pl/api/exchangerates/rates/A/EUR/today/');
 
             tableAData.done(function(data){
-                self.setState({euroRate: (data.rates[0].mid).toFixed(2) });
+                self.setState({euroRate: +(data.rates[0].mid).toFixed(2) }, ' tableAData - set currency');
                 self.$currencySwitch.removeAttr('disabled').removeClass('disabled');
 
                 if(self.isDefined(self.state.grossInvoice)) {
                     self.setState({
                         grossInvoiceInEuro: self.recalculate()
-                    });
+                    }, ' recalculate by tableAData');
                 }
 
-                self.currencySwitchHandler( { data: {self: self, initial: true} });
+                self.currencySwitchHandler( { data: {self: self, initial: true, $slider: $(".js-slider-switch")} });
 
             });
 
             tableAData.fail(function(error){
-                console.warn(error);
+                console.warn(error.statusText);
                 self.diff.reject(error)
             });
 
             this.diff.fail(function(error){
-                self.tableCData = self.getData('http://api.nbp.pl/api/exchangerates/rates/C/EUR/today/');
+                self.tableCData = self.getData('https://api.nbp.pl/api/exchangerates/rates/C/EUR/today/');
                 self.tableCData.done(function(data){
-                    // console.log(data.rates[0].ask);
-                    self.setState({euroRate: data.rates[0].ask});
+                    self.setState({euroRate: +data.rates[0].ask}, ' tableCData - set currency');
                     self.$currencySwitch.removeAttr('disabled').removeClass('disabled');
                     if(self.isDefined(self.state.grossInvoice )) {
-                        self.setState({ grossInvoiceInEuro: self.recalculate() });
+                        self.setState({ grossInvoiceInEuro: self.recalculate() }, ' recalculate by tableCData');
                     }
                 });
             });
         },
-        calculateTotalCost: function(){
-            // console.log('calculateTotalCost')
+        calculateTotalCost: function(data){
             if(this.isDefined(this.state.grossInvoice) && this.isDefined(this.state.paymentDeadline) ){
                 var days = +this.state.paymentDeadline.currentValue,
                     grossInvoiceValue = this.state.grossInvoice.currentValue,
+                    grossInvoiceValueToCalculate = this.state.currency === "EURO" ? (grossInvoiceValue*this.state.euroRate).toFixed(2) : grossInvoiceValue,
                     ratio = (days*0.1).toFixed(1),
-                    commission = ((grossInvoiceValue*ratio)/100).toFixed(2);
+                    baseCommission = 50,
+                    commission =  ((grossInvoiceValueToCalculate*ratio)/100),
+                    result = commission < baseCommission ? +baseCommission : +commission;
 
-                // console.log('this.state.grossInvoice.currentValue');
-                // console.log(this.state.grossInvoice.currentValue);
 
-                this.$total.text(commission + ' ' + this.state.grossInvoice.curr);
+                if(data.caller !== 'currencySwitchHandler-setCurrency'){
+                    this.$total.html('<strong>' + result.toFixed(2) + '</strong> PLN');
+                }
+
             }
         },
         isDefined: function(val) {
@@ -270,9 +330,8 @@
     };
 
     $(function () {
-        // $(document).foundation();
         var calc = new Calculator();
-        window.calc = calc;
-    })
+        // window.calc = calc;
+    });
 
 })(jQuery);
