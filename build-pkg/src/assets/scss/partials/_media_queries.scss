@@ -1,0 +1,23 @@
+.hide-sm {
+	display: inline-block;
+}
+.show-sm {
+	display: none;
+}
+@media (max-width: 1120px){
+	width: 940px;
+
+}
+@media (max-width: 960px){
+	width: 700px;	
+
+}	
+@media (max-width: 720px){
+	width: 100%;
+	max-width: 540px;
+
+}
+@media (max-width:460px){
+
+}
+

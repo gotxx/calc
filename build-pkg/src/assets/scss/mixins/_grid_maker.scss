@@ -1,0 +1,82 @@
+@mixin screen($size) {
+	$lg: "(max-width: 1100px)";
+	$md: "(max-width: 960px)";
+	$sm: "(max-width: 720px)";
+	$xs: "(max-width: 460px)";
+	@if $size == lg {
+		@media only screen and #{$lg} { @content; }
+	}
+	@else if $size == md {
+		@media only screen and #{$md} { @content; }
+	}
+	@else if $size == sm {
+		@media only screen and #{$sm} { @content; }
+	}
+	@else if $size == xs {
+		@media only screen and #{$xs} { @content; }
+	}
+	@else {
+		@media only screen and #{$size} { @content; }
+	}
+}
+@mixin columns($start, $end, $prefix){
+	@for $i from $start through $end {
+		#{$prefix}-#{$i} {
+			width: (100%/$end)*$i;
+		}
+	}
+}
+@mixin offset($start, $end, $prefix){
+	@for $i from $start through $end {
+		#{$prefix}-#{$i} {
+			margin-left: (100%/$end)*$i;
+		}
+	}
+}
+@mixin grid($columns, $gutter){
+	.lp-container {
+		// margin: 0 (-$gutter);
+		margin: 0;
+		padding: 0 $gutter;
+	}
+	.lp-row {
+		@extend .cf;
+		// margin: ($gutter*2) 0;
+		// margin: $gutter 0;
+		margin: 0;
+		padding: 0;
+		font-size: 0;
+	}
+	.hide-xs {
+		display: inline-block;
+	}
+	[class*="col-"] {
+		@extend %inblock;
+		@include box-sizing(border-box);
+		vertical-align: top;
+		// vertical-align: middle;
+		padding: 0 $gutter;
+		font-size: $basic-font-size;
+		&.va-mid {
+			vertical-align: middle;
+		}
+	}
+	@include columns(1, $columns,'.col'); //lg col
+	@include offset(0, $columns,'.offset'); //lg offset
+
+	@include screen('md'){
+		@include columns(1, $columns, '.col-md'); //md col
+		@include offset(0, $columns, '.offset-md'); //md offset
+	}
+	@include screen('sm'){
+		@include columns(1, $columns, '.col-sm'); //sm col
+		@include offset(0, $columns, '.offset-sm'); //sm offset
+	}
+	@include screen('xs'){
+		@include columns(1, $columns, '.col-xs'); //sx col
+		@include offset(0, $columns, '.offset-xs'); //xs offset
+		.hide-xs {
+			display: none;
+		}
+	}
+}
