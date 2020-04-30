@@ -41,7 +41,7 @@
     "gulp-sourcemaps": "^2.6.1",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "lodash.assign": "^4.2.0",
     "path": "^0.12.7",
     "pug": "^2.0.3",
